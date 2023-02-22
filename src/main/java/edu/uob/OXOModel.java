@@ -7,7 +7,7 @@ public class OXOModel {
     //private OXOPlayer[][] cells;
     private List<List<OXOPlayer>> cells;
 
-    private OXOPlayer[] players;
+    private ArrayList<OXOPlayer> players;
     private int currentPlayerNumber;
     private OXOPlayer winner;
     private boolean gameDrawn;
@@ -15,7 +15,6 @@ public class OXOModel {
 
     public OXOModel(int numberOfRows, int numberOfColumns, int winThresh) {
         winThreshold = winThresh;
-        /*List<List<OXOPlayer>>*/
         cells = new ArrayList<>();
         for (int i = 0; i < numberOfRows; i++) {
             List<OXOPlayer> row = new ArrayList<OXOPlayer>();
@@ -24,20 +23,15 @@ public class OXOModel {
             }
             cells.add(row);
         }
-        players = new OXOPlayer[2];
+        players = new ArrayList<>(2);
     }
 
     public int getNumberOfPlayers() {
-        return players.length;
+        return players.size();
     }
 
     public void addPlayer(OXOPlayer player) {
-        for (int i = 0; i < players.length; i++) {
-            if (players[i] == null) {
-                players[i] = player;
-                return;
-            }
-        }
+        players.add(player);
     }
 
     public void changePlayer() {
@@ -45,7 +39,7 @@ public class OXOModel {
     }
 
     public OXOPlayer getPlayerByNumber(int number) {
-        return players[number];
+        return players.get(number);
     }
 
     public OXOPlayer getCurrentPlayer() {
