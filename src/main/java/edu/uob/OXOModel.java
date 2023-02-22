@@ -232,6 +232,7 @@ public class OXOModel {
 
     public void addRow() {
         List<OXOPlayer> row = new ArrayList<OXOPlayer>();
+        if (this.getNumberOfRows() >= 9 || winner != null){return;}
         for (int j = 0; j < this.getNumberOfColumns();j++){
             row.add(null);
         }
@@ -241,6 +242,7 @@ public class OXOModel {
         this.cells.remove(this.getNumberOfRows()-1);
     }
     public void addColumn() {
+        if (this.getNumberOfColumns() >= 9 || winner != null){return;}
         for (int i = 0;i < this.getNumberOfRows();i++){
             this.getRowAccess(i).add(null);
         }
