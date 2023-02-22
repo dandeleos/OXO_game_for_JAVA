@@ -72,7 +72,6 @@ public class OXOModel {
 
     public OXOPlayer getCellOwner(int rowNumber, int colNumber) {
         if(!isInRange(rowNumber,colNumber)){return null;}
-        //System.out.println("line81row:"+rowNumber+'\n'+"col:"+colNumber);
         return cells.get(rowNumber).get(colNumber);
     }
 
@@ -209,15 +208,15 @@ public class OXOModel {
             rowMove = 1;
             colMove = -1;
         }
-            rowPos = rowNumber + rowMove;
-            colPos = colNumber + colMove;
+        rowPos = rowNumber + rowMove;
+        colPos = colNumber + colMove;
 
-            while (isInRange(rowPos,colPos) &&getCellOwner(rowPos,colPos) == player){
-                cnt++;
-                rowPos += rowMove;
-                colPos += colMove;
-            }
-            return cnt;
+        while (isInRange(rowPos,colPos) &&getCellOwner(rowPos,colPos) == player){
+            cnt++;
+            rowPos += rowMove;
+            colPos += colMove;
+        }
+        return cnt;
 
     }
 
@@ -247,7 +246,7 @@ public class OXOModel {
         }
     }
     public void removeColumn() {
-        for (int i = 0;i < this.getNumberOfRows();i++){
+        for (int i = 0;i < this.getNumberOfColumns();i++){
             this.getRowAccess(i).remove(this.getNumberOfColumns()-1);
         }
     }
@@ -272,6 +271,8 @@ public class OXOModel {
             }
         }
         currentPlayerNumber = 0;
+        setWinner(null);
+
     }
 
 
