@@ -1,12 +1,11 @@
 package edu.uob;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import edu.uob.OXOMoveException.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.time.Duration;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class ExampleControllerTests {
   private OXOModel model;
@@ -67,5 +66,74 @@ class ExampleControllerTests {
     String failedTestComment = "Controller failed to throw an InvalidIdentifierLengthException for command `abc123`";
     // The next lins is a bit ugly, but it is the easiest way to test exceptions (soz)
     assertThrows(InvalidIdentifierLengthException.class, ()-> sendCommandToController("abc123"), failedTestComment);
+  }
+  @Test
+  void testCheckWin(){
+    String failedTestComment = "No player win now";
+    sendCommandToController("a1");
+    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("a2");
+    sendCommandToController("a3");
+    model.addRow();
+    model.addColumn();
+    sendCommandToController("a4");
+    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("b1");
+    sendCommandToController("b2");
+    sendCommandToController("b3");
+    sendCommandToController("b4");
+    sendCommandToController("c1");
+    sendCommandToController("c2");
+    sendCommandToController("c3");
+    sendCommandToController("c4");
+    sendCommandToController("d1");
+    failedTestComment = "X win";
+    assertEquals(model.getWinner(),model.getPlayerByNumber(0),failedTestComment);
+
+    controller.reset();
+    failedTestComment = "No player win now";
+    sendCommandToController("a1");
+    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("b2");
+    sendCommandToController("a2");
+    sendCommandToController("c1");
+    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("a3");
+    sendCommandToController("c2");
+    sendCommandToController("a4");
+    sendCommandToController("d1");
+    failedTestComment = "X win";
+    assertEquals(model.getWinner(),model.getPlayerByNumber(0),failedTestComment);
+    /*------------------------------------------------------------------*/
+
+    controller.reset();
+    failedTestComment = "No player win now";
+    sendCommandToController("b1");
+    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("a1");
+    sendCommandToController("c1");
+    sendCommandToController("b2");
+    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("d1");
+    sendCommandToController("c3");
+    sendCommandToController("c2");
+    sendCommandToController("d4");
+    failedTestComment = "O win";
+    assertEquals(model.getWinner(),model.getPlayerByNumber(0),failedTestComment);
+
+    controller.reset();
+    failedTestComment = "No player win now";
+    sendCommandToController("a1");
+    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("a4");
+    sendCommandToController("a2");
+    sendCommandToController("b3");
+    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("b1");
+    sendCommandToController("c2");
+    sendCommandToController("c1");
+    sendCommandToController("d1");
+    failedTestComment = "O win";
+    assertEquals(model.getWinner(),model.getPlayerByNumber(1),failedTestComment);
   }
 }
