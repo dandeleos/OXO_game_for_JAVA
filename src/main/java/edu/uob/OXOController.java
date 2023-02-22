@@ -63,6 +63,7 @@ public class OXOController {
         }
     }
     public void handleIncomingCommand(String command) throws OXOMoveException {
+        if (gameModel.getWinner()!=null){return;}
         if (gameModel.isGameDrawn() || gameModel.isGameWon()){
             return;
         }

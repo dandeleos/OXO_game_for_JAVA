@@ -248,14 +248,18 @@ public class OXOModel {
         }
     }
     public void removeColumn() {
+        if (!isCellsEmpty()){return;}
         for (int i = 0;i < this.getNumberOfColumns();i++){
             this.getRowAccess(i).remove(this.getNumberOfColumns()-1);
         }
     }
     public void increaseWinThreshold() {
+        //if (getWinner() != null){return;}
         this.setWinThreshold(this.getWinThreshold()+1);
     }
     public void decreaseWinThreshold() {
+        if (getWinThreshold()<=3){return;}
+        if (!isCellsEmpty()){return;}
         this.setWinThreshold(this.getWinThreshold()-1);
     }
     public List<OXOPlayer> getRowAccess(int rowNumber){
@@ -277,6 +281,16 @@ public class OXOModel {
 
     }
 
+    public boolean isCellsEmpty(){
+        for (List <OXOPlayer> row:cells){
+            for (OXOPlayer player: row){
+                if (player != null){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
 
 }
