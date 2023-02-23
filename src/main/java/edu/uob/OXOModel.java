@@ -4,7 +4,6 @@ import java.util.*;
 
 public class OXOModel {
 
-    //private OXOPlayer[][] cells;
     private List<List<OXOPlayer>> cells;
 
     private ArrayList<OXOPlayer> players;
@@ -254,7 +253,6 @@ public class OXOModel {
         }
     }
     public void increaseWinThreshold() {
-        //if (getWinner() != null){return;}
         this.setWinThreshold(this.getWinThreshold()+1);
     }
     public void decreaseWinThreshold() {
