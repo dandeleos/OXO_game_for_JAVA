@@ -67,73 +67,106 @@ class ExampleControllerTests {
     // The next lins is a bit ugly, but it is the easiest way to test exceptions (soz)
     assertThrows(InvalidIdentifierLengthException.class, ()-> sendCommandToController("abc123"), failedTestComment);
   }
+
   @Test
-  void testCheckWin(){
-    String failedTestComment = "No player win now";
-    sendCommandToController("a1");
-    assertNull(model.getWinner(),failedTestComment);
-    sendCommandToController("a2");
-    sendCommandToController("a3");
+  void testBasicWinHorizontal() throws OXOMoveException {
+    // Find out which player is going to make the first move (they should be the eventual winner)
+    OXOPlayer firstMovingPlayer = model.getPlayerByNumber(model.getCurrentPlayerNumber());
+    // Make a bunch of moves for the two players
+    sendCommandToController("a1"); // First player
+    sendCommandToController("a2"); // Second player
+    sendCommandToController("b1"); // First player
+    sendCommandToController("b2"); // Second player
+    sendCommandToController("c1"); // First player
+
+    String failedTestComment = "Winner was expected to be " + firstMovingPlayer.getPlayingLetter() + " but wasn't";
+    assertEquals(firstMovingPlayer, model.getWinner(), failedTestComment);
+  }
+  @Test
+  void testBasicWinDia1() throws OXOMoveException {
+    // Find out which player is going to make the first move (they should be the eventual winner)
+    OXOPlayer firstMovingPlayer = model.getPlayerByNumber(model.getCurrentPlayerNumber());
+    // Make a bunch of moves for the two players
+    sendCommandToController("a1"); // First player
+    sendCommandToController("b1"); // Second player
+    sendCommandToController("b2"); // First player
+    sendCommandToController("c1"); // Second player
+    sendCommandToController("c3"); // First player
+
+    String failedTestComment = "Winner was expected to be " + firstMovingPlayer.getPlayingLetter() + " but wasn't";
+    assertEquals(firstMovingPlayer, model.getWinner(), failedTestComment);
+  }
+
+  @Test
+  void testBasicWinDia2() throws OXOMoveException {
+    // Find out which player is going to make the first move (they should be the eventual winner)
+    OXOPlayer firstMovingPlayer = model.getPlayerByNumber(model.getCurrentPlayerNumber()+1);
+    // Make a bunch of moves for the two players
+    sendCommandToController("a1"); // First player
+    sendCommandToController("a3"); // Second player
+    sendCommandToController("b1"); // First player
+    sendCommandToController("b2"); // Second player
+    sendCommandToController("a2"); // First player
+    sendCommandToController("c1"); // Second player
+
+    // a1, a2, a3 should be a win for the first player (since players alternate between moves)
+    // Let's check to see whether the first moving player is indeed the winner
+    String failedTestComment = "Winner was expected to be " + firstMovingPlayer.getPlayingLetter() + " but wasn't";
+    assertEquals(firstMovingPlayer, model.getWinner(), failedTestComment);
+  }
+  @Test
+  void testForWin(){
+
     model.addRow();
     model.addColumn();
-    sendCommandToController("a4");
-    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("a1");
+    String failedTestComment = "Winner was expected to be " + null + " but wasn't";
+    assertEquals(null,model.getWinner(),failedTestComment);
+    sendCommandToController("a2");
     sendCommandToController("b1");
-    sendCommandToController("b2");
     sendCommandToController("b3");
-    sendCommandToController("b4");
-    sendCommandToController("c1");
-    sendCommandToController("c2");
-    sendCommandToController("c3");
+    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("b2");
     sendCommandToController("c4");
-    sendCommandToController("d1");
-    failedTestComment = "X win";
-    assertEquals(model.getWinner(),model.getPlayerByNumber(0),failedTestComment);
-
-    controller.reset();
-    failedTestComment = "No player win now";
-    sendCommandToController("a1");
-    assertNull(model.getWinner(),failedTestComment);
-    sendCommandToController("b2");
-    sendCommandToController("a2");
+    //command below should not be counted
     sendCommandToController("c1");
-    assertNull(model.getWinner(),failedTestComment);
-    sendCommandToController("a3");
-    sendCommandToController("c2");
-    sendCommandToController("a4");
-    sendCommandToController("d1");
-    failedTestComment = "X win";
-    assertEquals(model.getWinner(),model.getPlayerByNumber(0),failedTestComment);
-    /*------------------------------------------------------------------*/
-
-    controller.reset();
-    failedTestComment = "No player win now";
-    sendCommandToController("b1");
-    assertNull(model.getWinner(),failedTestComment);
-    sendCommandToController("a1");
-    sendCommandToController("c1");
-    sendCommandToController("b2");
-    assertNull(model.getWinner(),failedTestComment);
-    sendCommandToController("d1");
-    sendCommandToController("c3");
-    sendCommandToController("c2");
-    sendCommandToController("d4");
-    failedTestComment = "O win";
-    assertEquals(model.getWinner(),model.getPlayerByNumber(0),failedTestComment);
-
-    controller.reset();
-    failedTestComment = "No player win now";
-    sendCommandToController("a1");
-    assertNull(model.getWinner(),failedTestComment);
-    sendCommandToController("a4");
-    sendCommandToController("a2");
-    sendCommandToController("b3");
-    assertNull(model.getWinner(),failedTestComment);
-    sendCommandToController("b1");
-    sendCommandToController("c2");
-    sendCommandToController("c1");
-    sendCommandToController("d1");
     failedTestComment = "O win";
     assertEquals(model.getWinner(),model.getPlayerByNumber(1),failedTestComment);
+    controller.reset();
+
+    failedTestComment = "No player should win the game but it wasn't";
+    model.increaseWinThreshold();
+    sendCommandToController("a1");
+    sendCommandToController("b1");
+    sendCommandToController("b2");
+    sendCommandToController("c2");
+    assertEquals(null,model.getWinner(),failedTestComment);
+    sendCommandToController("c3");
+    sendCommandToController("d3");
+    sendCommandToController("d4");
+
+    failedTestComment = "X should win but it is not";
+    assertEquals(model.getWinner(),model.getPlayerByNumber(0),failedTestComment);
+
+    controller.reset();
+    model.decreaseWinThreshold();
+    //WinThreshold will still 3
+    model.decreaseWinThreshold();
+    failedTestComment = "No player win by now";
+    sendCommandToController("a1");
+    assertNull(model.getWinner(),failedTestComment);
+    sendCommandToController("b1");
+    sendCommandToController("a2");
+    sendCommandToController("b2");
+    assertEquals(null,model.getWinner(),failedTestComment);
+    sendCommandToController("a3");
+    sendCommandToController("c3");
+    failedTestComment = "X should win the game";
+    assertEquals(model.getWinner(),model.getPlayerByNumber(0),failedTestComment);
+
+    controller.reset();
+    failedTestComment = "null should be winner but it wasn't";
+    assertEquals(null,model.getWinner(),failedTestComment);
+
   }
 }
